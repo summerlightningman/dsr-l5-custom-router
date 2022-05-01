@@ -12,11 +12,16 @@ const routes = {
 
 const content = document.querySelector('#content');
 
-window.navTo = address => {
-    const html = routes[address];
-    if (!html)
-        throw new Error('404: page not found')
-
-    window.history.pushState(address, null, address);
-    content.innerHTML = html;
+const replaceHTML = address => {
+    content.innerHTML = routes[address] || '';
 }
+
+window.navTo = address => {
+    window.history.pushState(address, null, address);
+    replaceHTML(address);
+}
+
+window.addEventListener('popstate', e => {
+    window.history.replaceState(e.state, '', e.state);
+    replaceHTML(e.state);
+});
